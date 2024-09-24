@@ -1,4 +1,5 @@
-import { globalErrorHandling } from "./middleware/asyncHandler.js";
+import Stripe from "stripe";
+import { asyncHandler, globalErrorHandling } from "./middleware/asyncHandler.js";
 import {
   authRouter,
   brandRouter,
@@ -11,9 +12,44 @@ import {
   subcategoryRouter,
   wishlistRouter,
 } from "./modules/index.js";
+import { Cart, Order, Product } from "../db/index.js";
 
 export const bootStrap = (app, express) => {
   // parse req
+  app.post(
+    "/webhook",
+    express.raw({ type: "application/json" }),
+    asyncHandler(async (req, res) => {
+      const sig = req.headers["stripe-signature"].toString();
+      const stripe = new Stripe(process.env.STRIPE_KEY);
+      let event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        "whsec_uVhjr2pkYnjpXDEH6FHA9xGV5dBe95Km"
+      );
+
+      if (event.type == "checkout.session.completed") {
+        const checkout = event.data.object;
+        const orderId = checkout.metadata.orderId;
+        const cartId = checkout.metadata.cartId;
+        // clear cart
+        await Cart.findByIdAndUpdate(cartId, { products: [] });
+        // update order status
+        const order = await Order.findByIdAndUpdate(orderId, {
+          status: "placed",
+        });
+        let products = order.products;
+        for (const product of products) {
+          await Product.findByIdAndUpdate(product.productId, {
+            $inc: { stock: -product.quantity },
+          });
+        }
+      }
+
+      // Return a 200 res to acknowledge receipt of the event
+      res.json({ message: "web hook completed from shoura" });
+    })
+  );
   app.use(express.json());
   // public folder
   app.use("/uploads", express.static("uploads"));

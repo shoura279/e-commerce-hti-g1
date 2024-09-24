@@ -89,6 +89,7 @@ export const createOrder = async (req, res, next) => {
       cancel_url: "https://google.com",
       line_items: createdOrder.products.map((product) => {
         return {
+          metadata: { cartId: cart._id, orderId: createdOrder._id },
           price_data: {
             currency: "egp",
             product_data: {
