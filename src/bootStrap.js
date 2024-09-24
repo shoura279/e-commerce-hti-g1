@@ -36,16 +36,16 @@ export const bootStrap = (app, express) => {
         const orderId = checkout.metadata.orderId;
         const cartId = checkout.metadata.cartId;
         // clear cart
-        await Cart.findByIdAndUpdate(cartId, { products: [] });
+        const cart = await Cart.findByIdAndUpdate(cartId, { products: [] });
         // update order status
         const order = await Order.findByIdAndUpdate(orderId, {
           status: "placed",
         });
-        let products = order.products;
+        let products = cart.products;
         console.log({ products });
 
         for (const product of products) {
-          const result = await Product.findByIdAndUpdate(product._id, {
+          const result = await Product.findByIdAndUpdate(product.productId, {
             $inc: { stock: -product.quantity },
           });
           console.log({ result });
