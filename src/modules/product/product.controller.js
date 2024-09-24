@@ -37,7 +37,7 @@ export const addProduct = async (req, res, next) => {
     const { secure_url, public_id } = await cloudinary.uploader.upload(req.files.mainImage[0].path, { folder: "hti-g1/products/main-image" })
     let mainImage = { secure_url, public_id }
     req.failImages = []
-    failImages.push(public_id)
+    req.failImages.push(public_id)
     let subImages = []
     // let subImages = req.files.subImages.map(async (file) => {
 
