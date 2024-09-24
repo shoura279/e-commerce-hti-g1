@@ -45,7 +45,7 @@ export const bootStrap = (app, express) => {
         console.log({ products });
 
         for (const product of products) {
-          const result = await Product.findByIdAndUpdate(product.productId, {
+          const result = await Product.findByIdAndUpdate(product._id, {
             $inc: { stock: -product.quantity },
           });
           console.log({ result });
