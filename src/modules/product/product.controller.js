@@ -72,7 +72,7 @@ export const addProduct = async (req, res, next) => {
         brand,
         mainImage,
         subImages,
-        createBy: req.authUser._id,
+        createdBy: req.authUser._id,
         updatedBy: req.authUser._id
     })
     // add to db

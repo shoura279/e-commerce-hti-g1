@@ -5,11 +5,12 @@ import { roles } from "../../utils/constant/enums.js";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
 import { addToCart } from "./cart.controller.js";
 
-const cartRouter = Router()
+const cartRouter = Router();
 // add to cart
-cartRouter.put('/',
-    isAuthenticated(),
-    isAuthorized([roles.USER]),
-    asyncHandler(addToCart)
-)
-export default cartRouter
+cartRouter.put(
+  "/",
+  isAuthenticated(),
+  isAuthorized([roles.USER, roles.ADMIN]),
+  asyncHandler(addToCart)
+);
+export default cartRouter;

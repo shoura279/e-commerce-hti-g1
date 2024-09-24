@@ -87,9 +87,12 @@ export const createOrder = async (req, res, next) => {
       payment_method_types: ["card"],
       success_url: "https://www.facebook.com",
       cancel_url: "https://google.com",
+      metadata: {
+        cartId: cart._id.toString(),
+        orderId: createdOrder._id.toString(),
+      },
       line_items: createdOrder.products.map((product) => {
         return {
-          metadata: { cartId: cart._id, orderId: createdOrder._id },
           price_data: {
             currency: "egp",
             product_data: {

@@ -10,7 +10,7 @@ const orderRouter = Router();
 orderRouter.post(
   "/",
   isAuthenticated(),
-  isAuthorized([roles.USER]),
+  isAuthorized([roles.USER, roles.ADMIN]),
   asyncHandler(createOrder)
 );
 export default orderRouter;

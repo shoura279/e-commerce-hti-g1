@@ -1,5 +1,8 @@
 import Stripe from "stripe";
-import { asyncHandler, globalErrorHandling } from "./middleware/asyncHandler.js";
+import {
+  asyncHandler,
+  globalErrorHandling,
+} from "./middleware/asyncHandler.js";
 import {
   authRouter,
   brandRouter,
@@ -39,10 +42,13 @@ export const bootStrap = (app, express) => {
           status: "placed",
         });
         let products = order.products;
+        console.log({ products });
+
         for (const product of products) {
-          await Product.findByIdAndUpdate(product.productId, {
+          const result = await Product.findByIdAndUpdate(product.productId, {
             $inc: { stock: -product.quantity },
           });
+          console.log({ result });
         }
       }
 
